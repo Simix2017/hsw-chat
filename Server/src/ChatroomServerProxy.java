@@ -6,14 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ChatroomServerSocket {
+public class ChatroomServerProxy {
 
     private final Socket socket;
     private final BufferedReader input;
     private final PrintWriter output;
     private final Chatroom chatroom;
 
-    public ChatroomServerSocket(Socket socket, Chatroom chatroom) throws IOException {
+    public ChatroomServerProxy(Socket socket, Chatroom chatroom) throws IOException {
         this.socket = socket;
         this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.output = new PrintWriter(socket.getOutputStream());
