@@ -1,3 +1,5 @@
+package de.hsw.chat;
+
 public interface Chatroom {
 
     void enter(Chatter chatter);

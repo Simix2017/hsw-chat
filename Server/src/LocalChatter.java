@@ -1,3 +1,5 @@
+import de.hsw.chat.Chatter;
+
 public class LocalChatter implements Chatter {
 
     private final String name;

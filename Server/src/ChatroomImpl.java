@@ -1,9 +1,12 @@
+import de.hsw.chat.Chatroom;
+import de.hsw.chat.Chatter;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class ChatroomImpl implements Chatroom {
 
-    private Set<Chatter> chatters = new HashSet<>();
+    private final Set<Chatter> chatters = new HashSet<>();
 
     @Override
     public void enter(Chatter chatter) {
