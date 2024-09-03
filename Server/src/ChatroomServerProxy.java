@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class ChatroomServerProxy implements Runnable {
 
@@ -48,9 +49,15 @@ public class ChatroomServerProxy implements Runnable {
 
     private void doEnter() throws IOException {
         final Chatter chatter = getChatter();
-        this.chatroom.enter(chatter);
-        this.output.println("ENTER_SUCCESSFUL");
-        this.output.flush();
+        //executeVoid(() -> this.chatroom.enter(chatter));
+        executeVoid(new Runnable() {
+
+            @Override
+            public void run() {
+                chatroom.enter(chatter);
+            }
+
+        });
     }
 
     private void doPostMessage() throws IOException {
@@ -72,6 +79,30 @@ public class ChatroomServerProxy implements Runnable {
         this.output.flush();
     }
 
+    private void doWrongInput() {
+    }
+
+    private void execute(Callable<?> logic) {
+        try {
+            final Object result = logic.call();
+
+            this.output.println("SUCCESSFUL");
+            this.output.println(result);
+            this.output.flush();
+        } catch (Throwable e) {
+            this.output.println("ERROR");
+            this.output.println(e.getMessage());
+            this.output.flush();
+        }
+    }
+
+    private void executeVoid(Runnable logic) {
+        execute(() -> {
+            logic.run();
+            return null;
+        });
+    }
+
     private Chatter getChatter() throws IOException {
         this.output.println("GIVE_CHATTER_ID");
         this.output.flush();
@@ -88,9 +119,6 @@ public class ChatroomServerProxy implements Runnable {
             this.output.flush();
             return this.chatters.get(id);
         }
-    }
-
-    private void doWrongInput() {
     }
 
 }

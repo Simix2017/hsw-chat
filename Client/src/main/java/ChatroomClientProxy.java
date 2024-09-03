@@ -30,10 +30,7 @@ public class ChatroomClientProxy implements Chatroom {
             this.output.println("ENTER");
             this.output.flush();
             sendChatter(chatter);
-            String command = this.input.readLine(); // Should be ENTER_SUCCESSFUL
-            if (!"ENTER_SUCCESSFUL".equals(command)) {
-                throw new RuntimeException("Invalid command: %s".formatted(command));
-            }
+            handleMethodCallResult(Void.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -72,8 +69,8 @@ public class ChatroomClientProxy implements Chatroom {
             final boolean successful = Boolean.parseBoolean(command);
             return successful;
         } catch (IOException e) {
-        throw new RuntimeException(e);
-    }
+            throw new RuntimeException(e);
+        }
     }
 
     private void sendChatter(Chatter chatter) throws IOException {
@@ -96,6 +93,33 @@ public class ChatroomClientProxy implements Chatroom {
             System.out.printf("Server created chatter %s%n", chatter.getName());
         } else {
             throw new RuntimeException("Invalid command: %s".formatted(command));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T handleMethodCallResult(Class<T> targetType) throws IOException {
+        final var resultType = this.input.readLine();
+        if ("SUCCESSFUL".equals(resultType)) {
+            // Successful method call
+            final var result = this.input.readLine();
+            if (targetType == Void.class) {
+                return null;
+            } else if (targetType == Integer.class) {
+                return (T) (Integer) Integer.parseInt(result);
+            } else if (targetType == Boolean.class) {
+                return (T) (Boolean) Boolean.parseBoolean(result);
+            } else if (targetType == String.class) {
+                return (T) result;
+            } else {
+                throw new RuntimeException("Invalid targetType: %s".formatted(targetType));
+            }
+        } else if ("ERROR".equals(resultType)) {
+            // Throwable because of method call
+            final var errorMessage = this.input.readLine();
+            throw new RuntimeException(errorMessage);
+        } else {
+            // Invalid server response
+            throw new RuntimeException("Invalid result type: %s".formatted(resultType));
         }
     }
 

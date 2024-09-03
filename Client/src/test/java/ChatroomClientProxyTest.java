@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Timeout;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,7 +23,7 @@ class ChatroomClientProxyTest {
 
     @Test
     @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
-    void testEnter() throws InterruptedException {
+    void testEnter() {
         tested.enter(chatter);
         tested.enter(chatter);
     }
