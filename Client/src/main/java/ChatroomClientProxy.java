@@ -91,11 +91,6 @@ public class ChatroomClientProxy implements Chatroom {
         if ("HAS_CHATTER_ID".equals(command)) {
             System.out.printf("Server has already chatter %s%n", chatter.getName());
         } else if ("NEED_CHATTER_INFORMATION".equals(command)) {
-            command = this.input.readLine(); // Should be GIVE_NAME
-            if (!"GIVE_NAME".equals(command)) {
-                throw new RuntimeException("Invalid command: %s".formatted(command));
-            }
-            System.out.println(command);
             this.output.println(chatter.getName());
             this.output.flush();
             System.out.printf("Server created chatter %s%n", chatter.getName());

@@ -11,9 +11,11 @@ public class Main {
         final var serverSocket = new ServerSocket(PORT);
         final Chatroom chatroom = new ChatroomImpl();
         while (true) {
-            try (final var socket = serverSocket.accept()) {
+            try {
+                final var socket = serverSocket.accept();
                 final var chatroomServerProxy = new ChatroomServerProxy(socket, chatroom);
-                chatroomServerProxy.run();
+                final var thread = new Thread(chatroomServerProxy);
+                thread.start();
             } catch (Exception e) {
                 e.printStackTrace();
             }

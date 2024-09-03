@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatroomServerProxy {
+public class ChatroomServerProxy implements Runnable {
 
     private final Socket socket;
     private final BufferedReader input;
@@ -24,12 +24,16 @@ public class ChatroomServerProxy {
         this.chatroom = chatroom;
     }
 
+    @Override
     public void run() {
+        System.out.println("run()");
         try {
             this.output.println("PROTOKOLL: ENTER, POST_MESSAGE, EXIT");
             this.output.flush();
             String command;
             while ((command = this.input.readLine()) != null) {
+                System.out.println(this);
+                System.out.println(command);
                 switch (command) {
                     case "ENTER" -> doEnter();
                     case "POST_MESSAGE" -> doPostMessage();
@@ -74,8 +78,6 @@ public class ChatroomServerProxy {
         final int id = Integer.parseInt(this.input.readLine());
         if (!this.chatters.containsKey(id)) {
             this.output.println("NEED_CHATTER_INFORMATION");
-            this.output.flush();
-            this.output.println("GIVE_NAME");
             this.output.flush();
             final var name = this.input.readLine();
             LocalChatter chatter = new LocalChatter(name);
