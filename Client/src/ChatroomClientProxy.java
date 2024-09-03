@@ -21,13 +21,21 @@ public class ChatroomClientProxy implements Chatroom {
     }
 
     @Override
-    public void enter(Chatter chatter) throws IOException {
-        this.output.println("ENTER");
-        this.output.flush();
-        String command = this.input.readLine(); // Should be GIVE_NAME
-        System.out.println(command);
-        this.output.println(chatter.getName());
-        this.output.flush();
+    public void enter(Chatter chatter) {
+        try {
+            this.output.println("ENTER");
+            this.output.flush();
+            String command = this.input.readLine(); // Should be GIVE_NAME
+            System.out.println(command);
+            this.output.println(chatter.getName());
+            this.output.flush();
+            command = this.input.readLine(); // Should be ENTER_SUCCESSFUL
+            if (!"ENTER_SUCCESSFUL".equals(command)) {
+                throw new RuntimeException("Invalid command: %s".formatted(command));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

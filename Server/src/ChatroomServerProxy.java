@@ -39,16 +39,31 @@ public class ChatroomServerProxy {
     }
 
     private void doEnter() throws IOException {
-        this.output.println("GIVE_NAME");
+        LocalChatter chatter = getLocalChatter();
+        this.chatroom.enter(chatter);
+        this.output.println("ENTER_SUCCESSFUL");
         this.output.flush();
-        final var name = this.input.readLine();
-        this.chatroom.enter(new LocalChatter(name));
     }
 
-    private void doPostMessage() {
+    private void doPostMessage() throws IOException {
+        this.output.println("GIVE_MESSAGE");
+        this.output.flush();
+        final var message = this.input.readLine();
+        LocalChatter chatter = getLocalChatter();
+        this.chatroom.postMessage(message, chatter);
+        this.output.println("POST_MESSAGE_SUCCESSFUL");
+        this.output.flush();
     }
 
     private void doExit() {
+    }
+
+    private LocalChatter getLocalChatter() throws IOException {
+        this.output.println("GIVE_NAME");
+        this.output.flush();
+        final var name = this.input.readLine();
+        LocalChatter chatter = new LocalChatter(name);
+        return chatter;
     }
 
     private void doWrongInput() {

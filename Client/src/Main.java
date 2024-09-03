@@ -12,6 +12,8 @@ public class Main {
         final var chatroom = new ChatroomClientProxy(socket);
         final Chatter chatter = new ChatterImpl("Max Mustermann");
         chatroom.enter(chatter);
+        System.out.println("Enter successful");
+        chatroom.postMessage("Hello World!", chatter);
     }
 
 }
