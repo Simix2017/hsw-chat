@@ -6,12 +6,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatroomClientProxy implements Chatroom {
 
     private final Socket socket;
     private final BufferedReader input;
     private final PrintWriter output;
+    private final Map<Chatter, Integer> chatters = new HashMap<>();
+    private int chatterId = 0;
 
     public ChatroomClientProxy(Socket socket) throws IOException {
         this.socket = socket;
@@ -73,13 +77,31 @@ public class ChatroomClientProxy implements Chatroom {
     }
 
     private void sendChatter(Chatter chatter) throws IOException {
-        String command = this.input.readLine(); // Should be GIVE_NAME
-        if (!"GIVE_NAME".equals(command)) {
+        if (!this.chatters.containsKey(chatter)) {
+            this.chatters.put(chatter, this.chatterId++);
+        }
+        final int id = this.chatters.get(chatter);
+        String command = this.input.readLine(); // Should be GIVE_CHATTER_ID
+        if (!"GIVE_CHATTER_ID".equals(command)) {
             throw new RuntimeException("Invalid command: %s".formatted(command));
         }
-        System.out.println(command);
-        this.output.println(chatter.getName());
+        this.output.println(id);
         this.output.flush();
+        command = this.input.readLine();
+        if ("HAS_CHATTER_ID".equals(command)) {
+            System.out.printf("Server has already chatter %s%n", chatter.getName());
+        } else if ("NEED_CHATTER_INFORMATION".equals(command)) {
+            command = this.input.readLine(); // Should be GIVE_NAME
+            if (!"GIVE_NAME".equals(command)) {
+                throw new RuntimeException("Invalid command: %s".formatted(command));
+            }
+            System.out.println(command);
+            this.output.println(chatter.getName());
+            this.output.flush();
+            System.out.printf("Server created chatter %s%n", chatter.getName());
+        } else {
+            throw new RuntimeException("Invalid command: %s".formatted(command));
+        }
     }
 
 }
