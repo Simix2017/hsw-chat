@@ -1,4 +1,5 @@
 import de.hsw.chat.Chatroom;
+import de.hsw.chat.Chatter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class ChatroomServerProxy {
     }
 
     private void doEnter() throws IOException {
-        LocalChatter chatter = getLocalChatter();
+        final Chatter chatter = getChatter();
         this.chatroom.enter(chatter);
         this.output.println("ENTER_SUCCESSFUL");
         this.output.flush();
@@ -49,16 +50,22 @@ public class ChatroomServerProxy {
         this.output.println("GIVE_MESSAGE");
         this.output.flush();
         final var message = this.input.readLine();
-        LocalChatter chatter = getLocalChatter();
+        final Chatter chatter = getChatter();
         this.chatroom.postMessage(message, chatter);
         this.output.println("POST_MESSAGE_SUCCESSFUL");
         this.output.flush();
     }
 
-    private void doExit() {
+    private void doExit() throws IOException {
+        final Chatter chatter = getChatter();
+        final boolean successful = this.chatroom.exit(chatter);
+        this.output.println("EXIT_NO_EXCEPTION");
+        this.output.flush();
+        this.output.println(successful);
+        this.output.flush();
     }
 
-    private LocalChatter getLocalChatter() throws IOException {
+    private Chatter getChatter() throws IOException {
         this.output.println("GIVE_NAME");
         this.output.flush();
         final var name = this.input.readLine();

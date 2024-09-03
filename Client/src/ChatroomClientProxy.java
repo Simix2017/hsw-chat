@@ -56,7 +56,20 @@ public class ChatroomClientProxy implements Chatroom {
 
     @Override
     public boolean exit(Chatter chatter) {
-        return false;
+        try {
+            this.output.println("EXIT");
+            this.output.flush();
+            sendChatter(chatter);
+            String command = this.input.readLine(); // Should be EXIT_NO_EXCEPTION
+            if (!"EXIT_NO_EXCEPTION".equals(command)) {
+                throw new RuntimeException("Invalid command: %s".formatted(command));
+            }
+            command = this.input.readLine();
+            final boolean successful = Boolean.parseBoolean(command);
+            return successful;
+        } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
     }
 
     private void sendChatter(Chatter chatter) throws IOException {
