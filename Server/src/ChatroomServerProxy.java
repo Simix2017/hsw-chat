@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatroomServerProxy {
 
@@ -13,6 +15,7 @@ public class ChatroomServerProxy {
     private final BufferedReader input;
     private final PrintWriter output;
     private final Chatroom chatroom;
+    private final Map<Integer, Chatter> chatters = new HashMap<>();
 
     public ChatroomServerProxy(Socket socket, Chatroom chatroom) throws IOException {
         this.socket = socket;
@@ -66,11 +69,23 @@ public class ChatroomServerProxy {
     }
 
     private Chatter getChatter() throws IOException {
-        this.output.println("GIVE_NAME");
+        this.output.println("GIVE_CHATTER_ID");
         this.output.flush();
-        final var name = this.input.readLine();
-        LocalChatter chatter = new LocalChatter(name);
-        return chatter;
+        final int id = Integer.parseInt(this.input.readLine());
+        if (!this.chatters.containsKey(id)) {
+            this.output.println("NEED_CHATTER_INFORMATION");
+            this.output.flush();
+            this.output.println("GIVE_NAME");
+            this.output.flush();
+            final var name = this.input.readLine();
+            LocalChatter chatter = new LocalChatter(name);
+            this.chatters.put(id, chatter);
+            return chatter;
+        } else {
+            this.output.println("HAS_CHATTER_ID");
+            this.output.flush();
+            return this.chatters.get(id);
+        }
     }
 
     private void doWrongInput() {
