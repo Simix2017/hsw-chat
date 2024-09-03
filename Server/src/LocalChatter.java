@@ -10,7 +10,7 @@ public class LocalChatter implements Chatter {
 
     @Override
     public void receiveMessage(String message) {
-
+        System.out.printf("%s hört: %s%n", name, message);
     }
 
     @Override

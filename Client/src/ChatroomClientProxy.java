@@ -25,11 +25,8 @@ public class ChatroomClientProxy implements Chatroom {
         try {
             this.output.println("ENTER");
             this.output.flush();
-            String command = this.input.readLine(); // Should be GIVE_NAME
-            System.out.println(command);
-            this.output.println(chatter.getName());
-            this.output.flush();
-            command = this.input.readLine(); // Should be ENTER_SUCCESSFUL
+            sendChatter(chatter);
+            String command = this.input.readLine(); // Should be ENTER_SUCCESSFUL
             if (!"ENTER_SUCCESSFUL".equals(command)) {
                 throw new RuntimeException("Invalid command: %s".formatted(command));
             }
@@ -40,12 +37,36 @@ public class ChatroomClientProxy implements Chatroom {
 
     @Override
     public void postMessage(String message, Chatter chatter) {
-
+        try {
+            this.output.println("POST_MESSAGE");
+            this.output.flush();
+            String command = this.input.readLine(); // Should be GIVE_MESSAGE
+            System.out.println(command);
+            this.output.println(message);
+            this.output.flush();
+            sendChatter(chatter);
+            command = this.input.readLine(); // Should be POST_MESSAGE_SUCCESSFUL
+            if (!"POST_MESSAGE_SUCCESSFUL".equals(command)) {
+                throw new RuntimeException("Invalid command: %s".formatted(command));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public boolean exit(Chatter chatter) {
         return false;
+    }
+
+    private void sendChatter(Chatter chatter) throws IOException {
+        String command = this.input.readLine(); // Should be GIVE_NAME
+        if (!"GIVE_NAME".equals(command)) {
+            throw new RuntimeException("Invalid command: %s".formatted(command));
+        }
+        System.out.println(command);
+        this.output.println(chatter.getName());
+        this.output.flush();
     }
 
 }
