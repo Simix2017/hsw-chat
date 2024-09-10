@@ -123,4 +123,16 @@ public class ChatroomClientProxy implements Chatroom {
         }
     }
 
+    public void disconnect() {
+        try {
+            this.output.println("DISCONNECT");
+            this.output.flush();
+            String command = this.input.readLine(); // Should be DISCONNECT_SUCSESSFUL
+            System.out.println(command);
+            this.socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

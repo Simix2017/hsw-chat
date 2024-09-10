@@ -29,7 +29,7 @@ public class ChatroomServerProxy implements Runnable {
     public void run() {
         System.out.println("run()");
         try {
-            this.output.println("PROTOKOLL: ENTER, POST_MESSAGE, EXIT");
+            this.output.println("PROTOKOLL: ENTER, POST_MESSAGE, EXIT, DISCONNECT");
             this.output.flush();
             String command;
             while ((command = this.input.readLine()) != null) {
@@ -39,6 +39,10 @@ public class ChatroomServerProxy implements Runnable {
                     case "ENTER" -> doEnter();
                     case "POST_MESSAGE" -> doPostMessage();
                     case "EXIT" -> doExit();
+                    case "DISCONNECT" -> {
+                        doDisconnect();
+                        return;
+                    }
                     default -> doWrongInput();
                 }
             }
@@ -119,6 +123,12 @@ public class ChatroomServerProxy implements Runnable {
             this.output.flush();
             return this.chatters.get(id);
         }
+    }
+
+    private void doDisconnect()throws IOException {
+        this.output.println("DISCONNECT_SUCCESSFUL");
+        this.output.flush();
+        this.socket.close();
     }
 
 }
