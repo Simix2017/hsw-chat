@@ -15,14 +15,19 @@ public class Main {
         final Chatter chatter = new ChatterImpl("Max Mustermann");
         chatroom.enter(chatter);
         Scanner scanner = new Scanner(System.in);
-        while (true){
+       boolean running = true;
+        while (running){
             String input = scanner.nextLine();
             System.out.println(input);
             chatroom.postMessage(input, chatter);
+            if (input.equals("exit")){
+                running = false;
+            }
         }
+        ((ChatroomClientProxy)chatroom).disconnect();
 //        System.out.println("Enter successful");
 //        chatroom.postMessage("Hello World!", chatter);
-//        ((ChatroomClientProxy)chatroom).disconnect();
+//
 
     }
 
