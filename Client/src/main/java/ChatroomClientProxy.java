@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,6 +89,20 @@ public class ChatroomClientProxy implements Chatroom {
         if ("HAS_CHATTER_ID".equals(command)) {
             System.out.printf("Server has already chatter %s%n", chatter.getName());
         } else if ("NEED_CHATTER_INFORMATION".equals(command)) {
+            // hier soll ein Receiver server proxy entstehen
+            // auf der anderen seite soll ein receiver client proxy entstehen
+            // beide sollen miteinander verbunden sein
+            Runnable r = new Runnable() {
+                public void run() {
+                    ServerSocket serverSocket = new ServerSocket(6969);
+                    Socket socket = serverSocket.accept();
+                    RecieverServerProxy receiver = new RecieverServerProxy(socket, chatter);
+                    Thread thread = new Thread(receiver);
+                    thread.start();
+                }
+            };
+            Thread thread = new Thread(r);
+            thread.start();
             this.output.println(chatter.getName());
             this.output.flush();
             System.out.printf("Server created chatter %s%n", chatter.getName());
