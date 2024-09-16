@@ -17,11 +17,11 @@ public class MainClient {
         Scanner scanner = new Scanner(System.in);
        boolean running = true;
         while (running){
-            System.out.println("Input: exit for Exiting, how exciting");
+            System.out.println("Input: f for Exiting, how exciting");
             String input = scanner.nextLine();
             System.out.println(input);
             chatroom.postMessage(input, chatter);
-            if (input.equals("exit")){
+            if (input.equals("f")){
                 running = false;
             }
         }
