@@ -116,7 +116,9 @@ public class ChatroomServerProxy implements Runnable {
             this.output.flush();
             // final var name = this.input.readLine();
             int port = Integer.parseInt(this.input.readLine());
+            System.out.println(System.currentTimeMillis() + " Server Before Socket");
             Socket chatterSocket = new Socket("localhost", port);
+            System.out.println(System.currentTimeMillis() + " Server After Socket");
             ReceiverClientProxy chatter = new ReceiverClientProxy(chatterSocket);
             // LocalChatter chatter = new LocalChatter(name);
             this.chatters.put(id, chatter);

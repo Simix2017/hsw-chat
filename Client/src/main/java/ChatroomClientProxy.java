@@ -43,7 +43,7 @@ public class ChatroomClientProxy implements Chatroom {
             this.output.println("POST_MESSAGE");
             this.output.flush();
             String command = this.input.readLine(); // Should be GIVE_MESSAGE
-            System.out.println(command);
+            System.err.println(command);
             this.output.println(message);
             this.output.flush();
             sendChatter(chatter);
@@ -79,7 +79,7 @@ public class ChatroomClientProxy implements Chatroom {
             this.output.println("DISCONNECT");
             this.output.flush();
             String command = this.input.readLine(); // Should be DISCONNECTED_SUCCESSFUL
-            System.out.println("Disconnected");
+            System.err.println("Disconnected");
             this.socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -108,8 +108,11 @@ public class ChatroomClientProxy implements Chatroom {
             Runnable r = new Runnable() {
                 public void run() {
                     try {
+                        System.out.println(System.currentTimeMillis() + " Client Before Socket");
                         ServerSocket serverSocket = new ServerSocket(port);
+                        System.out.println(System.currentTimeMillis() + " Client Before Accept");
                         Socket socket = serverSocket.accept();
+                        System.out.println(System.currentTimeMillis() + " Client After Accept");
                         RecieverServerProxy receiver = new RecieverServerProxy(socket, chatter);
                         Thread thread = new Thread(receiver);
                         thread.start();
@@ -120,8 +123,15 @@ public class ChatroomClientProxy implements Chatroom {
             };
             Thread thread = new Thread(r);
             thread.start();
+            try {
+                Thread.sleep(2101);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(System.currentTimeMillis() + " 4");
             this.output.println(port);
             this.output.flush();
+            System.out.println(System.currentTimeMillis() + " 5");
             System.out.printf("Server created chatter %s%n", chatter.getName());
         } else {
             throw new RuntimeException("Invalid command: %s".formatted(command));

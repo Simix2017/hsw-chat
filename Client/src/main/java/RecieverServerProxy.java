@@ -32,7 +32,7 @@ public class RecieverServerProxy implements Runnable {
             String command;
             while ((command = this.input.readLine()) != null) {
                 System.out.println(this);
-                System.out.println(command);
+                System.err.println(command);
                 switch (command) {
                     case "RECEIVE_MESSAGE" -> doReceiveMessage();
                     case "GET_NAME" -> doGetName();
