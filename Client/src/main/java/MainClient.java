@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Main {
+public class MainClient {
 
     public static final int SERVER_PORT = 4711;
 
@@ -17,6 +17,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
        boolean running = true;
         while (running){
+            System.out.println("Input: exit for Exiting, how exciting");
             String input = scanner.nextLine();
             System.out.println(input);
             chatroom.postMessage(input, chatter);
@@ -27,7 +28,6 @@ public class Main {
         ((ChatroomClientProxy)chatroom).disconnect();
 //        System.out.println("Enter successful");
 //        chatroom.postMessage("Hello World!", chatter);
-//
 
     }
 

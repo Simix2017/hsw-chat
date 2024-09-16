@@ -74,7 +74,20 @@ public class ChatroomClientProxy implements Chatroom {
         }
     }
 
+    public void disconnect() {
+        try {
+            this.output.println("DISCONNECT");
+            this.output.flush();
+            String command = this.input.readLine(); // Should be DISCONNECTED_SUCCESSFUL
+            System.out.println("Disconnected");
+            this.socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void sendChatter(Chatter chatter) throws IOException {
+        int port = 6969;
         if (!this.chatters.containsKey(chatter)) {
             this.chatters.put(chatter, this.chatterId++);
         }
@@ -94,16 +107,20 @@ public class ChatroomClientProxy implements Chatroom {
             // beide sollen miteinander verbunden sein
             Runnable r = new Runnable() {
                 public void run() {
-                    ServerSocket serverSocket = new ServerSocket(6969);
-                    Socket socket = serverSocket.accept();
-                    RecieverServerProxy receiver = new RecieverServerProxy(socket, chatter);
-                    Thread thread = new Thread(receiver);
-                    thread.start();
+                    try {
+                        ServerSocket serverSocket = new ServerSocket(port);
+                        Socket socket = serverSocket.accept();
+                        RecieverServerProxy receiver = new RecieverServerProxy(socket, chatter);
+                        Thread thread = new Thread(receiver);
+                        thread.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             };
             Thread thread = new Thread(r);
             thread.start();
-            this.output.println(chatter.getName());
+            this.output.println(port);
             this.output.flush();
             System.out.printf("Server created chatter %s%n", chatter.getName());
         } else {
@@ -135,18 +152,6 @@ public class ChatroomClientProxy implements Chatroom {
         } else {
             // Invalid server response
             throw new RuntimeException("Invalid result type: %s".formatted(resultType));
-        }
-    }
-
-    public void disconnect() {
-        try {
-            this.output.println("DISCONNECT");
-            this.output.flush();
-            String command = this.input.readLine(); // Should be DISCONNECT_SUCSESSFUL
-            System.out.println(command);
-            this.socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

@@ -31,7 +31,8 @@ public class ReceiverClientProxy implements Chatter{
         this.output.flush();
         this.input.readLine(); // sollte MESSAGE_RECEIVED
     } catch (IOException e) {
-        throw new RuntimeException(e);
+        // throw new RuntimeException(e);
+        e.printStackTrace();
     }
     }
 

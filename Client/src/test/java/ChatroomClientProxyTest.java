@@ -15,7 +15,7 @@ class ChatroomClientProxyTest {
     private final ChatroomClientProxy tested;
 
     ChatroomClientProxyTest() throws IOException {
-        this.socket = new Socket("localhost", Main.SERVER_PORT);
+        this.socket = new Socket("localhost", MainClient.SERVER_PORT);
 
         this.tested = new ChatroomClientProxy(socket);
     }

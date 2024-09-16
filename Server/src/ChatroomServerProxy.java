@@ -114,8 +114,11 @@ public class ChatroomServerProxy implements Runnable {
         if (!this.chatters.containsKey(id)) {
             this.output.println("NEED_CHATTER_INFORMATION");
             this.output.flush();
-            final var name = this.input.readLine();
-            LocalChatter chatter = new LocalChatter(name);
+            // final var name = this.input.readLine();
+            int port = Integer.parseInt(this.input.readLine());
+            Socket chatterSocket = new Socket("localhost", port);
+            ReceiverClientProxy chatter = new ReceiverClientProxy(chatterSocket);
+            // LocalChatter chatter = new LocalChatter(name);
             this.chatters.put(id, chatter);
             return chatter;
         } else {
